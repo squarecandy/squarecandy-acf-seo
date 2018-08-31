@@ -3,7 +3,7 @@
 Plugin Name: Square Candy ACF SEO Plugin
 Plugin URI:  http://squarecandydesign.com
 Description: provides basic SEO meta fields, defaults and per post overrides
-Version:     v1.1.0
+Version:     v1.2.0
 Author:      Square Candy Design
 Author URI:  http://squarecandydesign.com
 License:     GPL3
@@ -57,8 +57,8 @@ function squarecandy_acf_seo_init() {
 				),
 				'default_value' => '',
 				'placeholder' => '',
-				'maxlength' => 160,
-				'rows' => 2,
+				'maxlength' => 280,
+				'rows' => 3,
 				'new_lines' => '',
 			),
 			array (
@@ -212,8 +212,8 @@ function squarecandy_acf_seo_init() {
 				),
 				'default_value' => '',
 				'placeholder' => '',
-				'maxlength' => 160,
-				'rows' => 2,
+				'maxlength' => 280,
+				'rows' => 3,
 				'new_lines' => '',
 			),
 			array (
@@ -312,6 +312,15 @@ function squarecandy_acf_seo_init() {
 				'name' => 'canonical_url',
 				'type' => 'url',
 				'instructions' => 'Enter the canonical URL if appropriate. This is the "primary location" of the content. <a href="https://moz.com/learn/seo/canonicalization">More infomation</a>. Leave this blank in most cases.',
+			),
+			array(
+				'key' => 'field_noindex748923795647483',
+				'label' => 'NOINDEX',
+				'name' => 'noindex',
+				'type' => 'true_false',
+				'message' => 'Discourage Search Engines from Indexing this Page.',
+				'default_value' => 0,
+				'instructions' => 'This is appropriate for hidden links, thank you pages, etc. that are publicly accessible but should not be found in a Search.',
 			),
 		),
 		'location' => $types,
@@ -565,6 +574,11 @@ function squarecandy_acf_seo_hook_header() {
 	<?php if ( $data['canonical'] ) : ?>
 		<!-- Canonical URL (points to primary source) -->
 		<link rel="canonical" href="<?php echo $data['canonical']; ?>" />
+	<?php endif; ?>
+
+	<?php if ( $data['noindex'] ) : ?>
+		<!-- Discourage Search Engines from Indexing this Page -->
+		<meta name="robots" content="noindex, follow">
 	<?php endif; ?>
 
 	<?php
