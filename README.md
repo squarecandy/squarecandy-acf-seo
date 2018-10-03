@@ -6,6 +6,10 @@ Provides basic SEO meta fields, logical defaults and per post overrides.
 
 ## History
 
+### v1.3.1
+
+* Add compatibility with GitHub Updater
+
 ### v1.3.0
 
 * Fix bug that noindex checkbox was not outputting the header code
