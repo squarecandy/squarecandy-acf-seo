@@ -57,7 +57,7 @@ function squarecandy_acf_seo_init() {
 				),
 				'default_value' => '',
 				'placeholder' => '',
-				'maxlength' => 280,
+				'maxlength' => 330,
 				'rows' => 3,
 				'new_lines' => '',
 			),
@@ -142,6 +142,13 @@ function squarecandy_acf_seo_init() {
 				'append' => '',
 				'maxlength' => '',
 			),
+			array (
+				'key' => 'field_favicon27438b0b502',
+				'label' => 'Addition Raw Header Code (for favicon settings, etc.)',
+				'name' => 'favicon_header',
+				'type' => 'textarea',
+				'instructions' => '',
+			),
 		),
 		'location' => array (
 			array (
@@ -212,7 +219,7 @@ function squarecandy_acf_seo_init() {
 				),
 				'default_value' => '',
 				'placeholder' => '',
-				'maxlength' => 280,
+				'maxlength' => 330,
 				'rows' => 3,
 				'new_lines' => '',
 			),
@@ -487,6 +494,22 @@ function squarecandy_acf_seo_get_data() {
 		$return['canonical'] = false;
 	}
 
+	// if noindex is set add it to the array
+	if ( function_exists('get_field') && get_field('noindex') ) {
+		$return['noindex'] = get_field('noindex');
+	}
+	else {
+		$return['noindex'] = false;
+	}
+
+	// if favicon_header is set add it to the array
+	if ( function_exists('get_field') && get_field('favicon_header') ) {
+		$return['favicon_header'] = get_field('favicon_header');
+	}
+	else {
+		$return['favicon_header'] = false;
+	}
+
 	wp_reset_postdata();
 
 	// return the array
@@ -541,13 +564,13 @@ function squarecandy_acf_seo_hook_header() {
 	<title><?php echo $data['head_title']; ?></title>
 
 	<?php if ( $data['description'] ) : ?>
-		<meta name="description" content="<?php echo $data['description']; ?>" />
-		<meta name="twitter:description" content="<?php echo $data['description']; ?>">
-		<meta property="og:description" content="<?php echo $data['description']; ?>" />
+		<meta name="description" content="<?php echo esc_attr( $data['description'] ); ?>" />
+		<meta name="twitter:description" content="<?php echo esc_attr( $data['description'] ); ?>">
+		<meta property="og:description" content="<?php echo esc_attr( $data['description'] ); ?>" />
 	<?php endif; ?>
 
 	<!-- Twitter Card data -->
-	<meta name="twitter:title" content="<?php echo $data['social_title']; ?>">
+	<meta name="twitter:title" content="<?php echo esc_attr( $data['social_title'] ); ?>">
 	<meta name="twitter:card" content="<?php echo $data['twitter_card']; ?>">
 	<?php if ( $data['twittersite'] ) : ?>
 		<meta name="twitter:site" content="<?php echo $data['twittersite']; ?>">
@@ -561,10 +584,10 @@ function squarecandy_acf_seo_hook_header() {
 
 
 	<!-- Open Graph data -->
-	<meta property="og:title" content="<?php echo $data['social_title']; ?>" />
+	<meta property="og:title" content="<?php echo esc_attr( $data['social_title'] ); ?>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="<?php the_permalink(); ?> " />
-	<meta property="og:site_name" content="<?php bloginfo('name'); ?>" />
+	<meta property="og:site_name" content="<?php esc_attr( bloginfo('name') ); ?>" />
 	<?php if ( $data['facebookimage'] ) : ?>
 		<meta property="og:image" content="<?php echo $data['facebookimage']; ?>" />
 		<meta property="og:image:width" content="1200" />
@@ -579,6 +602,11 @@ function squarecandy_acf_seo_hook_header() {
 	<?php if ( $data['noindex'] ) : ?>
 		<!-- Discourage Search Engines from Indexing this Page -->
 		<meta name="robots" content="noindex, follow">
+	<?php endif; ?>
+
+	<?php if ( $data['favicon_header'] ) : ?>
+		<!-- Code added from Square Candy SEO (favicon code field) -->
+		<?php echo $data['favicon_header']; ?>
 	<?php endif; ?>
 
 	<?php
