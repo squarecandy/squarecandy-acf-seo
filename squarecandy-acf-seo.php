@@ -3,7 +3,7 @@
 Plugin Name: Square Candy ACF SEO Plugin
 Plugin URI:  http://squarecandydesign.com
 Description: provides basic SEO meta fields, defaults and per post overrides
-Version:     v1.2.0
+Version:     v1.3.0
 Author:      Square Candy Design
 Author URI:  http://squarecandydesign.com
 License:     GPL3
@@ -579,7 +579,7 @@ function squarecandy_acf_seo_hook_header() {
 		<meta name="twitter:creator" content="<?php echo $data['twitterauthor']; ?>">
 	<?php endif; ?>
 	<?php if ( $data['twitterimage'] ) : ?>
-		<meta name="twitter:image:src" content="<?php echo $data['twitterimage']; ?>">
+		<meta name="twitter:image:src" content="<?php echo esc_url( $data['twitterimage'] ); ?>">
 	<?php endif; ?>
 
 
@@ -589,14 +589,14 @@ function squarecandy_acf_seo_hook_header() {
 	<meta property="og:url" content="<?php the_permalink(); ?> " />
 	<meta property="og:site_name" content="<?php esc_attr( bloginfo('name') ); ?>" />
 	<?php if ( $data['facebookimage'] ) : ?>
-		<meta property="og:image" content="<?php echo $data['facebookimage']; ?>" />
+		<meta property="og:image" content="<?php echo esc_url( $data['facebookimage'] ); ?>" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="627" />
 	<?php endif; ?>
 
 	<?php if ( $data['canonical'] ) : ?>
 		<!-- Canonical URL (points to primary source) -->
-		<link rel="canonical" href="<?php echo $data['canonical']; ?>" />
+		<link rel="canonical" href="<?php echo esc_url( $data['canonical'] ); ?>" />
 	<?php endif; ?>
 
 	<?php if ( $data['noindex'] ) : ?>
