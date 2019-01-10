@@ -332,7 +332,7 @@ function squarecandy_acf_seo_init() {
 			),
 		),
 		'location' => $types,
-		'menu_order' => 0,
+		'menu_order' => 200,
 		'position' => 'normal',
 		'style' => 'default',
 		'label_placement' => 'top',
