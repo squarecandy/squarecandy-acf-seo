@@ -4,7 +4,7 @@ Plugin Name: Square Candy ACF SEO Plugin
 Plugin URI:  https://github.com/squarecandy/squarecandy-acf-seo
 GitHub Plugin URI: https://github.com/squarecandy/squarecandy-acf-seo
 Description: provides basic SEO meta fields, defaults and per post overrides
-Version:     v1.3.2
+Version:     v1.3.3
 Author:      Square Candy Design
 Author URI:  http://squarecandydesign.com
 License:     GPL3

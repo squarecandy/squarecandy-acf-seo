@@ -6,6 +6,10 @@ Provides basic SEO meta fields, logical defaults and per post overrides.
 
 ## History
 
+### v1.3.3
+
+* Push the meta box down further in the menu_order
+
 ### v1.3.2
 
 * Fix Bug with favicon code block
