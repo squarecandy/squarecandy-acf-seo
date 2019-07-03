@@ -125,6 +125,25 @@ function squarecandy_acf_seo_init() {
 				'maxlength' => '',
 			),
 			array (
+				'key' => 'field_59147ataxonomies',
+				'label' => 'Taxonomies',
+				'name' => 'seo_taxonomies',
+				'type' => 'text',
+				'instructions' => 'Comma separated list of Taxonomies to add Custom SEO field options to',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array (
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'default_value' => 'category,post_tag',
+				'placeholder' => 'category,post_tag,custom_taxonomy',
+				'prepend' => '',
+				'append' => '',
+				'maxlength' => '',
+			),
+			array (
 				'key' => 'field_shuef27googlean8b4f',
 				'label' => 'Google Analytics',
 				'name' => 'googleanalytics',
@@ -185,6 +204,24 @@ function squarecandy_acf_seo_init() {
 		$types[] = array(
 			array (
 				'param' => 'post_type',
+				'operator' => '==',
+				'value' => trim($item),
+			),
+		);
+	}
+	
+	// get the array of taxonomies to add
+	if ( function_exists('get_field') && get_field('seo_taxonomies', 'options') ) {
+		$taxdata = get_field('seo_taxonomies', 'options');
+		$taxdata = explode(',', $taxdata);
+	}
+	else {
+		$taxdata = array('category', 'post_tag');
+	}
+	foreach ($taxdata as $item) {
+		$types[] = array(
+			array (
+				'param' => 'taxonomy',
 				'operator' => '==',
 				'value' => trim($item),
 			),
@@ -364,25 +401,38 @@ add_action( 'plugins_loaded', 'squarecandy_acf_seo_image_sizes' );
 
 
 function squarecandy_acf_seo_get_data() {
-	global $post;
-	// $post = $wp_query->post;
-	if ( empty($post) && isset($_GET['post']) ) {
-		$post = get_post($_GET['post']);
-	}
-	if ( empty($post) ) {
-		return false;
-	}
-	setup_postdata( $post );
+	/*
+	if ( 'post' === $type ) :
+		$post = get_post($id);
+		if ( empty($post) ) {
+			return false;
+		}
+		setup_postdata( $post );
+	elseif ( 'taxonomy' === $type ) :
+		$post = get_term( $id );
+		pre_r($post);
+		if ( empty($post) ) {
+			return false;
+		}
+		setup_postdata( $post );
+	else :
+
+	endif;
+	*/
+	$obj = get_queried_object();
 
 	// get the data
 	$return = array();
 	// title
-	if ( function_exists('get_field') && get_field('seo_title_override') ) {
-		$return['head_title'] = get_field('seo_title_override');
+	if ( function_exists('get_field') && get_field('seo_title_override', $obj) ) {
+		$return['head_title'] = get_field('seo_title_override', $obj);
 	}
 	else {
-		if ( is_admin() ) {
-			$return['head_title'] = $post->post_title . ' — ' .get_bloginfo('name');
+		if ( is_admin() && isset( $obj->post_title ) ) {
+			$return['head_title'] = $obj->post_title . ' — ' .get_bloginfo('name');
+		}
+		elseif ( is_admin() && isset( $obj->name ) ) {
+			$return['head_title'] = $obj->name . ' — ' .get_bloginfo('name');
 		}
 		else {
 			$return['head_title'] = wp_title('—',false,'right') . get_bloginfo('name');
@@ -390,11 +440,11 @@ function squarecandy_acf_seo_get_data() {
 	}
 
 	// social title
-	if ( function_exists('get_field') && get_field('seo_social_title_override') ) {
-		$return['social_title'] = get_field('seo_social_title_override');
+	if ( function_exists('get_field') && get_field('seo_social_title_override', $obj) ) {
+		$return['social_title'] = get_field('seo_social_title_override', $obj);
 	}
-	elseif ( function_exists('get_field') && get_field('seo_title_override') ) {
-		$return['social_title'] = get_field('seo_title_override');
+	elseif ( function_exists('get_field') && get_field('seo_title_override', $obj) ) {
+		$return['social_title'] = get_field('seo_title_override', $obj);
 	}
 	else {
 		$return['social_title'] = wp_title('—',false,'right') . get_bloginfo('name');
@@ -402,8 +452,8 @@ function squarecandy_acf_seo_get_data() {
 
 	// description
 	// if post-specific description is not empty
-	if ( function_exists('get_field') && get_field('seo_meta_description') ) {
-		$return['description'] = get_field('seo_meta_description');
+	if ( function_exists('get_field') && get_field('seo_meta_description', $obj) ) {
+		$return['description'] = get_field('seo_meta_description', $obj);
 	}
 	// else if we can get an excerpt for the post
 	elseif ( is_single() ) {
@@ -433,8 +483,8 @@ function squarecandy_acf_seo_get_data() {
 
 	// image
 	// if post-specific social media image is not empty
-	if ( function_exists('get_field') && get_field('seo_social_media_image') ) {
-		$image = get_field('seo_social_media_image', $post->ID);
+	if ( function_exists('get_field') && get_field('seo_social_media_image', $obj) ) {
+		$image = get_field('seo_social_media_image', $obj);
 		$facebookimage = wp_get_attachment_image_src( $image, 'squarecandy-acf-seo-facebook' );
 		$return['facebookimage'] = $facebookimage[0];
 		$twitterimage = wp_get_attachment_image_src( $image, 'squarecandy-acf-seo-twitter' );
@@ -480,24 +530,31 @@ function squarecandy_acf_seo_get_data() {
 		$return['twitterauthor'] = $return['twittersite'];
 	}
 	// if post specific twitter handle exists, override the author handle
-	if ( function_exists('get_field') && get_field('seo_twitter_handle') ) {
-		$return['twitterauthor'] = get_field('seo_twitter_handle');
+	if ( function_exists('get_field') && get_field('seo_twitter_handle', $obj) ) {
+		$return['twitterauthor'] = get_field('seo_twitter_handle', $obj);
 		if (!$return['twittersite']) {
-			$return['twittersite'] = get_field('seo_twitter_handle');
+			$return['twittersite'] = get_field('seo_twitter_handle', $obj);
 		}
 	}
+	
+	// permalink
+	if ( is_tax() || is_category() || is_tag() ) :
+		$return['url'] = get_term_link( $obj );
+	else :
+		$return['url'] = get_permalink( $obj );
+	endif;
 
 	// if the canonical url is set add it to the array
-	if ( function_exists('get_field') && get_field('canonical_url') ) {
-		$return['canonical'] = get_field('canonical_url');
+	if ( function_exists('get_field') && get_field('canonical_url', $obj) ) {
+		$return['canonical'] = get_field('canonical_url', $obj);
 	}
 	else {
 		$return['canonical'] = false;
 	}
 
 	// if noindex is set add it to the array
-	if ( function_exists('get_field') && get_field('noindex') ) {
-		$return['noindex'] = get_field('noindex');
+	if ( function_exists('get_field') && get_field('noindex', $obj) ) {
+		$return['noindex'] = get_field('noindex', $obj);
 	}
 	else {
 		$return['noindex'] = false;
@@ -510,8 +567,6 @@ function squarecandy_acf_seo_get_data() {
 	else {
 		$return['favicon_header'] = false;
 	}
-
-	wp_reset_postdata();
 
 	// return the array
 	return $return;
@@ -543,31 +598,17 @@ function squarecandy_acf_seo_google_preview_html() {
 // add the tags to the HTML <head>
 function squarecandy_acf_seo_hook_header() {
 
-	// global $post;
-	global $wp_query;
-	if ( isset($wp_query->post) ) {
-		$post = $wp_query->post;
-	}
-	elseif ( isset($_GET['post']) ) {
-		$post = get_post($_GET['post']);
-	}
-	else {
-		return false;
-	}
-
-	setup_postdata( $post );
-
-	$data = squarecandy_acf_seo_get_data($post->ID);
+	// get the data
+	$data = squarecandy_acf_seo_get_data();
 
 	// output the code
 	?>
-
 	<title><?php echo $data['head_title']; ?></title>
 
 	<?php if ( $data['description'] ) : ?>
-		<meta name="description" content="<?php echo esc_attr( $data['description'] ); ?>" />
+		<meta name="description" content="<?php echo esc_attr( $data['description'] ); ?>">
 		<meta name="twitter:description" content="<?php echo esc_attr( $data['description'] ); ?>">
-		<meta property="og:description" content="<?php echo esc_attr( $data['description'] ); ?>" />
+		<meta property="og:description" content="<?php echo esc_attr( $data['description'] ); ?>">
 	<?php endif; ?>
 
 	<!-- Twitter Card data -->
@@ -583,21 +624,20 @@ function squarecandy_acf_seo_hook_header() {
 		<meta name="twitter:image:src" content="<?php echo esc_url( $data['twitterimage'] ); ?>">
 	<?php endif; ?>
 
-
 	<!-- Open Graph data -->
-	<meta property="og:title" content="<?php echo esc_attr( $data['social_title'] ); ?>" />
+	<meta property="og:title" content="<?php echo esc_attr( $data['social_title'] ); ?>">
 	<meta property="og:type" content="article" />
-	<meta property="og:url" content="<?php the_permalink(); ?> " />
-	<meta property="og:site_name" content="<?php esc_attr( bloginfo('name') ); ?>" />
+	<meta property="og:url" content="<?php echo esc_url( $data['url'] ); ?> ">
+	<meta property="og:site_name" content="<?php esc_attr( bloginfo('name') ); ?>">
 	<?php if ( $data['facebookimage'] ) : ?>
-		<meta property="og:image" content="<?php echo esc_url( $data['facebookimage'] ); ?>" />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="627" />
+		<meta property="og:image" content="<?php echo esc_url( $data['facebookimage'] ); ?>">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="627">
 	<?php endif; ?>
 
 	<?php if ( $data['canonical'] ) : ?>
 		<!-- Canonical URL (points to primary source) -->
-		<link rel="canonical" href="<?php echo esc_url( $data['canonical'] ); ?>" />
+		<link rel="canonical" href="<?php echo esc_url( $data['canonical'] ); ?>">
 	<?php endif; ?>
 
 	<?php if ( $data['noindex'] ) : ?>
@@ -611,7 +651,6 @@ function squarecandy_acf_seo_hook_header() {
 	<?php endif; ?>
 
 	<?php
-	wp_reset_postdata();
 }
 add_action('wp_head','squarecandy_acf_seo_hook_header');
 
