@@ -6,6 +6,11 @@ Provides basic SEO meta fields, logical defaults and per post overrides.
 
 ## History
 
+### v1.4.0
+
+* Add capacity for Categories, Tags and Custom Taxonomies
+* Cleanup code and output HTML
+
 ### v1.3.3
 
 * Push the meta box down further in the menu_order
