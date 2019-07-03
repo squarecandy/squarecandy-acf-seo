@@ -401,24 +401,7 @@ add_action( 'plugins_loaded', 'squarecandy_acf_seo_image_sizes' );
 
 
 function squarecandy_acf_seo_get_data() {
-	/*
-	if ( 'post' === $type ) :
-		$post = get_post($id);
-		if ( empty($post) ) {
-			return false;
-		}
-		setup_postdata( $post );
-	elseif ( 'taxonomy' === $type ) :
-		$post = get_term( $id );
-		pre_r($post);
-		if ( empty($post) ) {
-			return false;
-		}
-		setup_postdata( $post );
-	else :
 
-	endif;
-	*/
 	$obj = get_queried_object();
 
 	// get the data
