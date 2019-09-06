@@ -432,7 +432,8 @@ function squarecandy_acf_seo_get_data() {
 	else {
 		$return['social_title'] = wp_title('—',false,'right') . get_bloginfo('name');
 	}
-
+	
+	global $pagenow;
 	// description
 	// if post-specific description is not empty
 	if ( function_exists('get_field') && get_field('seo_meta_description', $obj) ) {
@@ -440,8 +441,14 @@ function squarecandy_acf_seo_get_data() {
 	}
 	// else if we can get an excerpt for the post
 	// note: check with is_singular not is_single to be sure to include PAGES too https://www.engagewp.com/is_single-vs-is_singular-vs-is_page/
-	elseif ( is_singular() ) {
-		$excerpt = get_the_excerpt();
+	// note: check if we are on a post edit admin page to provide an accurate preview
+	elseif ( is_singular() || 'post.php' === $pagenow ) {
+		if ( 'post.php' === $pagenow ) {
+			$excerpt = get_the_excerpt( (int) $_GET['post'] );
+		}
+		else {
+			$excerpt = get_the_excerpt();
+		}
 		// https://wordpress.stackexchange.com/a/70924/41488
 		$limit = 330;
 		$excerpt = preg_replace(" (\[.*?\])",'',$excerpt);
@@ -450,6 +457,7 @@ function squarecandy_acf_seo_get_data() {
 		$excerpt = substr($excerpt, 0, $limit);
 		$excerpt = substr($excerpt, 0, strripos($excerpt, " "));
 		$excerpt = trim(preg_replace( '/\s+/', ' ', $excerpt));
+		
 		$return['description'] = $excerpt;
 	}
 	// else if default description field is not empty
