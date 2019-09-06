@@ -6,6 +6,11 @@ Provides basic SEO meta fields, logical defaults and per post overrides.
 
 ## History
 
+### v1.4.1
+
+* fix bug where the_excerpt fallback did not work on PAGE content.
+* fix invalid HTML
+
 ### v1.4.0
 
 * Add capacity for Categories, Tags and Custom Taxonomies
