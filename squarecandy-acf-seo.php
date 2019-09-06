@@ -656,7 +656,7 @@ function squarecandy_googleanatlyics_header() {
 		function_exists('get_field') &&
 		!get_field('googleanalytics', 'options')
 	) {
-		echo "<!-- OOPS - enter your google analytics UA account number on the settings page --- squarecandy_acf_seo googleanalytics -->";
+		echo "<!-- OOPS - enter your google analytics UA account number on the settings page - squarecandy_acf_seo googleanalytics -->";
 	}
 	else {
 		echo '<!-- squarecandy_acf_seo googleanalytics will go here on the live site. -->';
