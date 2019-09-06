@@ -6,6 +6,10 @@ Provides basic SEO meta fields, logical defaults and per post overrides.
 
 ## History
 
+### v1.4.2
+
+* bugfix - description preview not matching front end
+
 ### v1.4.1
 
 * fix bug where the_excerpt fallback did not work on PAGE content.
