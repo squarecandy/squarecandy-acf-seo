@@ -439,10 +439,11 @@ function squarecandy_acf_seo_get_data() {
 		$return['description'] = get_field('seo_meta_description', $obj);
 	}
 	// else if we can get an excerpt for the post
-	elseif ( is_single() ) {
+	// note: check with is_singular not is_single to be sure to include PAGES too https://www.engagewp.com/is_single-vs-is_singular-vs-is_page/
+	elseif ( is_singular() ) {
 		$excerpt = get_the_excerpt();
 		// https://wordpress.stackexchange.com/a/70924/41488
-		$limit = 160;
+		$limit = 330;
 		$excerpt = preg_replace(" (\[.*?\])",'',$excerpt);
 		$excerpt = strip_shortcodes($excerpt);
 		$excerpt = strip_tags($excerpt);
