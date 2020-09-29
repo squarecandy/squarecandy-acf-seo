@@ -523,6 +523,8 @@ function squarecandy_acf_seo_get_data() {
 	// permalink
 	if ( is_tax() || is_category() || is_tag() ) :
 		$return['url'] = get_term_link( $obj );
+	elseif ( is_post_type_archive( get_post_types( array( '_builtin' => false ) ) ) ) : 
+		$return['url'] = get_post_type_archive_link( get_queried_object()->name );
 	else :
 		$return['url'] = get_permalink( $obj );
 	endif;
@@ -607,7 +609,7 @@ function squarecandy_acf_seo_hook_header() {
 	<!-- Open Graph data -->
 	<meta property="og:title" content="<?php echo esc_attr( $data['social_title'] ); ?>">
 	<meta property="og:type" content="article" />
-	<meta property="og:url" content="<?php echo esc_url( $data['url'] ); ?> ">
+	<meta property="og:url" content="<?php echo esc_url( $data['url'] ); ?>">
 	<meta property="og:site_name" content="<?php esc_attr( bloginfo( 'name' ) ); ?>">
 	<?php if ( $data['facebookimage'] ) : ?>
 		<meta property="og:image" content="<?php echo esc_url( $data['facebookimage'] ); ?>">
